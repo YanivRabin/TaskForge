@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary:    #0D1B2A; /* Deep navy - Primary background, navbar, footer */
+  --color-secondary:  #1B263B; /* Dark slate - Accent background, buttons, hover states blue */
+  --color-tertiary:   #415A77; /* Slate blue - Card backgrounds, section dividers */
+  --color-accent:     #778DA9; /* Muted blue-gray - Text headings, icons, lighter buttons*/
+  --color-light:      #E0E1DD; /* Soft light gray -	Page background, contrast against dark UI*/
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+put here the colors that are always use for bg
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
