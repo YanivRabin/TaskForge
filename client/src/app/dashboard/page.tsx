@@ -7,6 +7,8 @@ import ProjectCard from "@/components/ProjectCard";
 import StatCard from "@/components/StatCard";
 import TaskListItem from "@/components/TaskListItem";
 import SortToggle from "@/components/SortToggle";
+import { priorityWeight } from "@/lib/constants";
+import { Task } from "@/types/task";
 import {
   FaTasks,
   FaClock,
@@ -14,19 +16,14 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 
-const priorityWeight = {
-  high: 1,
-  medium: 2,
-  low: 3,
-};
-
-const initialTasks = [
+const initialTasks: Task[] = [
   {
     id: 1,
     title: "Write release notes",
     project: "Marketing Website",
     dueDate: "Apr 22",
     priority: "high" as const,
+    status: "in-progress",
   },
   {
     id: 2,
@@ -34,6 +31,7 @@ const initialTasks = [
     project: "CRM Tool",
     dueDate: "Apr 21",
     priority: "medium" as const,
+    status: "in-progress",
   },
   {
     id: 3,
@@ -41,6 +39,7 @@ const initialTasks = [
     project: "Mobile UI Kit",
     dueDate: "Apr 25",
     priority: "low" as const,
+    status: "in-progress",
   },
 ];
 
@@ -48,6 +47,8 @@ export default function DashboardPage() {
   const { showToast } = useToast();
   const [tasks, setTasks] = useState(initialTasks);
   const [sortBy, setSortBy] = useState<"date" | "priority">("date");
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
@@ -141,8 +142,6 @@ export default function DashboardPage() {
       <div className="space-y-4 mb-12">
         {tasks
           .sort((a, b) => {
-            const priorityWeight = { high: 1, medium: 2, low: 3 };
-
             if (sortBy === "priority") {
               return priorityWeight[a.priority] - priorityWeight[b.priority];
             } else {
@@ -157,12 +156,16 @@ export default function DashboardPage() {
           .map((task) => (
             <TaskListItem
               key={task.id}
-              title={task.title}
-              project={task.project}
-              dueDate={task.dueDate}
-              priority={task.priority}
-              completed={false}
-              onToggle={() => handleComplete(task.id)}
+              task={task}
+              onTaskStatusChange={(id, newStatus) => {
+                if (newStatus === "completed") {
+                  handleComplete(id);
+                } else {
+                  setTasks((prev) =>
+                    prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+                  );
+                }
+              }}
             />
           ))}
       </div>

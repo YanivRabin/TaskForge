@@ -1,16 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import { Task, TaskStatus } from "@/types/task";
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { IoAlertCircleSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useToast } from "@/components/toast/ToastContext";
 
 type TaskListItemProps = {
-  title: string;
-  dueDate: string;
-  priority?: "low" | "medium" | "high";
-  project?: string;
-  completed?: boolean;
-  onToggle?: (completed: boolean) => void;
+  task: Task;
+  onTaskStatusChange?: (id: number, newTaskStatus: TaskStatus) => void;
 };
 
 const priorityColorMap = {
@@ -32,29 +30,23 @@ const priorityIconMap = {
 };
 
 export default function TaskListItem({
-  title,
-  dueDate,
-  priority = "medium",
-  project,
-  completed = false,
-  onToggle,
+  task,
+  onTaskStatusChange,
 }: TaskListItemProps) {
-  const [isChecked, setIsChecked] = useState(completed);
   const [isVisible, setIsVisible] = useState(true);
+  const [currentStatus, setCurrentStatus] = useState<TaskStatus>(task.status);
+
+  const { id, title, project, dueDate, priority } = task;
 
   const textColor = priorityColorMap[priority];
   const bgColor = priorityBgMap[priority];
   const icon = priorityIconMap[priority];
 
-  const handleCheck = () => {
-    setIsChecked(true);
-    onToggle?.(true);
-    setTimeout(() => setIsVisible(false), 400);
+  const handleTaskStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value as TaskStatus;
+    setCurrentStatus(newStatus);
+    onTaskStatusChange?.(id, newStatus);
   };
-
-  useEffect(() => {
-    setIsChecked(completed);
-  }, [completed]);
 
   if (!isVisible) return null;
 
@@ -64,52 +56,34 @@ export default function TaskListItem({
         flex justify-between items-center gap-4
         ${bgColor} border border-gray-200 rounded-xl px-5 py-4
         shadow-sm hover:shadow-md transition-all duration-400 ease-in-out
-        ${isChecked ? "opacity-0 scale-95" : "opacity-100 scale-100"}
+        ${currentStatus === "completed" ? "opacity-0 scale-95" : "opacity-100 scale-100"}
       `}
     >
-      {/* Left: checkbox + content */}
-      <div className="flex items-center gap-4 w-full">
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={handleCheck}
-          className="h-5 w-5 accent-secondary rounded border-gray-400"
-        />
-
-        <div className="flex flex-col w-full">
-          <h4
-            className={`text-lg font-semibold text-primary ${
-              isChecked ? "line-through opacity-60" : ""
-            }`}
-          >
-            {title}
-          </h4>
-          {project && (
-            <p
-              className={`text-sm text-secondary ${
-                isChecked ? "line-through opacity-60" : ""
-              }`}
-            >
-              Project: {project}
-            </p>
-          )}
-        </div>
+      {/* Left: task content */}
+      <div className="flex flex-col w-full">
+        <h4 className="text-lg font-semibold text-primary">{title}</h4>
+        {project && <p className="text-sm text-secondary">Project: {project}</p>}
       </div>
 
-      {/* Right: priority + due date */}
-      <div className="flex items-center gap-2 min-w-[320px] justify-end">
-        {/* Icon */}
+      {/* Right: priority + due date + dropdown */}
+      <div className="flex items-center gap-4 min-w-[380px] justify-end">
         <div className="flex justify-center">{icon}</div>
-
-        {/* Priority text */}
         <div className={`w-26 text-sm font-medium ${textColor} text-center`}>
           {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
         </div>
-
-        {/* Due date */}
         <div className="text-sm text-secondary whitespace-nowrap w-20 text-right">
           Due {dueDate}
         </div>
+        <select
+          value={currentStatus}
+          onChange={handleTaskStatusChange}
+          className="text-sm bg-white border border-gray-300 px-2 py-1 rounded-md focus:ring-2 focus:ring-secondary focus:outline-none"
+        >
+          <option value="not-started">Not Started</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="overdue">Overdue</option>
+        </select>
       </div>
     </div>
   );
