@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TaskForge",
-  description: "A task management tool",
+  description: "A team collaboration platform to manage your work together",
 };
 
 export default function RootLayout({
