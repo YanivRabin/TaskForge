@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/toast/ToastContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
 import StatCard from "@/components/StatCard";
 import TaskListItem from "@/components/TaskListItem";
-import Toast from "@/components/Toast";
 import {
   FaTasks,
   FaClock,
@@ -39,23 +39,20 @@ const initialTasks = [
 
 export default function DashboardPage() {
   const [tasks, setTasks] = useState(initialTasks);
-  const [recentlyCompleted, setRecentlyCompleted] = useState<
-    (typeof initialTasks)[0] | null
-  >(null);
+  const { showToast } = useToast();
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
 
     setTasks((prev) => prev.filter((t) => t.id !== id));
-    setRecentlyCompleted(task);
-  };
 
-  const handleUndo = () => {
-    if (recentlyCompleted) {
-      setTasks((prev) => [recentlyCompleted!, ...prev]);
-      setRecentlyCompleted(null);
-    }
+    showToast({
+      message: `Marked "${task.title}" as complete.`,
+      onUndo: () => {
+        setTasks((prev) => [task, ...prev]);
+      },
+    });
   };
 
   return (
@@ -136,15 +133,6 @@ export default function DashboardPage() {
           />
         ))}
       </div>
-
-      {/* Toast */}
-      {recentlyCompleted && (
-        <Toast
-          message={`Marked "${recentlyCompleted.title}" as complete.`}
-          onUndo={handleUndo}
-          onClose={() => setRecentlyCompleted(null)}
-        />
-      )}
     </DashboardLayout>
   );
 }
