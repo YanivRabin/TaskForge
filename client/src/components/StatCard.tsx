@@ -23,7 +23,7 @@ export default function StatCard({
         transition-transform duration-200
         hover:scale-[1.03] hover:shadow-lg
         hover:brightness-110
-        focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-white
+        focus:outline focus:outline-offset-2 focus:outline-white
         cursor-pointer
         w-full sm:w-full
         ${color}

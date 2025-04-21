@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
 import StatCard from "@/components/StatCard";
+import TaskListItem from "@/components/TaskListItem";
+import Toast from "@/components/Toast";
 import {
   FaTasks,
   FaClock,
@@ -8,10 +13,54 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 
+const initialTasks = [
+  {
+    id: 1,
+    title: "Write release notes",
+    project: "Marketing Website",
+    dueDate: "Apr 22",
+    priority: "high" as const,
+  },
+  {
+    id: 2,
+    title: "Connect database to API",
+    project: "CRM Tool",
+    dueDate: "Apr 23",
+    priority: "medium" as const,
+  },
+  {
+    id: 3,
+    title: "Finalize app icons",
+    project: "Mobile UI Kit",
+    dueDate: "Apr 25",
+    priority: "low" as const,
+  },
+];
+
 export default function DashboardPage() {
+  const [tasks, setTasks] = useState(initialTasks);
+  const [recentlyCompleted, setRecentlyCompleted] = useState<
+    (typeof initialTasks)[0] | null
+  >(null);
+
+  const handleComplete = (id: number) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setRecentlyCompleted(task);
+  };
+
+  const handleUndo = () => {
+    if (recentlyCompleted) {
+      setTasks((prev) => [recentlyCompleted!, ...prev]);
+      setRecentlyCompleted(null);
+    }
+  };
+
   return (
     <DashboardLayout title="Dashboard Overview">
-      {/* Section Title */}
+      {/* Quick Stats */}
       <h2 className="text-xl font-semibold text-secondary mb-4">Quick Stats</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
         <StatCard
@@ -44,7 +93,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Project cards */}
+      {/* My Projects */}
       <h2 className="text-xl font-semibold text-secondary mb-4">My Projects</h2>
       <div className="flex flex-wrap gap-6 mb-12">
         <ProjectCard
@@ -69,6 +118,33 @@ export default function DashboardPage() {
           href="/projects/ui-kit"
         />
       </div>
+
+      {/* Upcoming Tasks */}
+      <h2 className="text-xl font-semibold text-secondary mb-4">
+        Upcoming Tasks
+      </h2>
+      <div className="space-y-4 mb-12">
+        {tasks.map((task) => (
+          <TaskListItem
+            key={task.id}
+            title={task.title}
+            project={task.project}
+            dueDate={task.dueDate}
+            priority={task.priority}
+            completed={false}
+            onToggle={() => handleComplete(task.id)}
+          />
+        ))}
+      </div>
+
+      {/* Toast */}
+      {recentlyCompleted && (
+        <Toast
+          message={`Marked "${recentlyCompleted.title}" as complete.`}
+          onUndo={handleUndo}
+          onClose={() => setRecentlyCompleted(null)}
+        />
+      )}
     </DashboardLayout>
   );
 }

@@ -37,7 +37,7 @@ export default function DashboardLayout({ title, children }: LayoutProps) {
           </h1>
           <div className="flex items-center gap-3">
             <span className="text-sm text-secondary">John Doe</span>
-            <button className="bg-secondary text-white px-3 py-1 rounded-md text-sm hover:bg-tertiary transition">
+            <button className="cursor-pointer bg-secondary text-white px-3 py-1 rounded-md text-sm hover:bg-tertiary transition">
               Logout
             </button>
           </div>
