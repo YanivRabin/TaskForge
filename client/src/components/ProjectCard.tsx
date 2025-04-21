@@ -1,20 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { Project } from "@/types/project";
 
 type ProjectCardProps = {
-  title: string;
-  description?: string;
-  dueDate?: string;
-  progress: number; // 0 to 100
+  project: Project;
   href?: string;
 };
 
-export default function ProjectCard({
-  title,
-  description,
-  dueDate,
-  progress,
-  href,
-}: ProjectCardProps) {
+export default function ProjectCard({ project, href }: ProjectCardProps) {
+  const { title, description, dueDate, progress } = project;
+
   const card = (
     <div
       className={`

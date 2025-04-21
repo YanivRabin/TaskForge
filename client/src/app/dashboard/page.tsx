@@ -15,31 +15,68 @@ import {
   FaFolderOpen,
   FaExclamationTriangle,
 } from "react-icons/fa";
+import { Project } from "@/types/project";
 
 const initialTasks: Task[] = [
   {
     id: 1,
     title: "Write release notes",
     project: "Marketing Website",
+    category: "Marketing",
     dueDate: "Apr 22",
     priority: "high" as const,
     status: "in-progress",
+    owner: "Yaniv Rabin",
   },
   {
     id: 2,
     title: "Connect database to API",
     project: "CRM Tool",
+    category: "Development",
     dueDate: "Apr 21",
     priority: "medium" as const,
     status: "in-progress",
+    owner: "Yaniv Rabin",
   },
   {
     id: 3,
     title: "Finalize app icons",
     project: "Mobile UI Kit",
+    category: "Design",
     dueDate: "Apr 25",
     priority: "low" as const,
     status: "in-progress",
+    owner: "Yaniv Rabin",
+  },
+];
+
+const initialProjects: Project[] = [
+  {
+    id: 1,
+    title: "Marketing Website",
+    description: "Landing page and blog redesign for Q2 launch",
+    dueDate: "Apr 30",
+    progress: 65,
+    status: "active",
+    teamMembers: ["Yaniv Rabin"],
+  },
+  {
+    id: 2,
+    title: "Internal CRM Tool",
+    description: "Phase 1 of the CRM for sales & support team",
+    dueDate: "May 10",
+    progress: 40,
+    status: "active",
+    teamMembers: ["Yaniv Rabin"],
+  },
+  {
+    id: 3,
+    title: "Mobile App UI Kit",
+    description: "UI system for cross-platform components",
+    dueDate: "Apr 25",
+    progress: 90,
+    status: "archived",
+    teamMembers: ["Yaniv Rabin"],
   },
 ];
 
@@ -47,8 +84,6 @@ export default function DashboardPage() {
   const { showToast } = useToast();
   const [tasks, setTasks] = useState(initialTasks);
   const [sortBy, setSortBy] = useState<"date" | "priority">("date");
-  const [isOpen, setIsOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
@@ -102,27 +137,13 @@ export default function DashboardPage() {
       {/* My Projects */}
       <h2 className="text-xl font-semibold text-secondary mb-4">My Projects</h2>
       <div className="flex flex-wrap gap-6 mb-12">
-        <ProjectCard
-          title="Marketing Website"
-          description="Landing page and blog redesign for Q2 launch"
-          progress={65}
-          dueDate="Apr 30"
-          href="/projects/marketing-website"
-        />
-        <ProjectCard
-          title="Internal CRM Tool"
-          description="Phase 1 of the CRM for sales & support team"
-          progress={40}
-          dueDate="May 10"
-          href="/projects/internal-crm"
-        />
-        <ProjectCard
-          title="Mobile App UI Kit"
-          description="UI system for cross-platform components"
-          progress={90}
-          dueDate="Apr 25"
-          href="/projects/ui-kit"
-        />
+        {initialProjects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            href={`/projects/${project.id}`}
+          />
+        ))}
       </div>
 
       {/* Upcoming Tasks */}
@@ -162,7 +183,9 @@ export default function DashboardPage() {
                   handleComplete(id);
                 } else {
                   setTasks((prev) =>
-                    prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+                    prev.map((t) =>
+                      t.id === id ? { ...t, status: newStatus } : t
+                    )
                   );
                 }
               }}

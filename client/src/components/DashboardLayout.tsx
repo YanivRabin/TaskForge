@@ -29,7 +29,7 @@ export default function DashboardLayout({ title, children }: LayoutProps) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col bg-light">
+      <div className="flex-1 flex flex-col ">
         {/* Top Bar */}
         <header className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
           <h1 className="text-lg font-semibold text-primary">
