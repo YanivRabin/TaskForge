@@ -6,12 +6,19 @@ import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
 import StatCard from "@/components/StatCard";
 import TaskListItem from "@/components/TaskListItem";
+import SortToggle from "@/components/SortToggle";
 import {
   FaTasks,
   FaClock,
   FaFolderOpen,
   FaExclamationTriangle,
 } from "react-icons/fa";
+
+const priorityWeight = {
+  high: 1,
+  medium: 2,
+  low: 3,
+};
 
 const initialTasks = [
   {
@@ -25,7 +32,7 @@ const initialTasks = [
     id: 2,
     title: "Connect database to API",
     project: "CRM Tool",
-    dueDate: "Apr 23",
+    dueDate: "Apr 21",
     priority: "medium" as const,
   },
   {
@@ -38,8 +45,9 @@ const initialTasks = [
 ];
 
 export default function DashboardPage() {
-  const [tasks, setTasks] = useState(initialTasks);
   const { showToast } = useToast();
+  const [tasks, setTasks] = useState(initialTasks);
+  const [sortBy, setSortBy] = useState<"date" | "priority">("date");
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
@@ -117,21 +125,46 @@ export default function DashboardPage() {
       </div>
 
       {/* Upcoming Tasks */}
-      <h2 className="text-xl font-semibold text-secondary mb-4">
-        Upcoming Tasks
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-secondary">Upcoming Tasks</h2>
+
+        {/* Sort by buttons */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm text-secondary mr-2 font-medium">
+            Sort by:
+          </span>
+          <SortToggle sortBy={sortBy} setSortBy={setSortBy} />
+        </div>
+      </div>
+
       <div className="space-y-4 mb-12">
-        {tasks.map((task) => (
-          <TaskListItem
-            key={task.id}
-            title={task.title}
-            project={task.project}
-            dueDate={task.dueDate}
-            priority={task.priority}
-            completed={false}
-            onToggle={() => handleComplete(task.id)}
-          />
-        ))}
+        {tasks
+          .sort((a, b) => {
+            const priorityWeight = { high: 1, medium: 2, low: 3 };
+
+            if (sortBy === "priority") {
+              return priorityWeight[a.priority] - priorityWeight[b.priority];
+            } else {
+              const dateA = new Date(a.dueDate).getTime();
+              const dateB = new Date(b.dueDate).getTime();
+
+              if (dateA !== dateB) return dateA - dateB;
+              return priorityWeight[a.priority] - priorityWeight[b.priority];
+            }
+          })
+          .slice(0, 5)
+          .map((task) => (
+            <TaskListItem
+              key={task.id}
+              title={task.title}
+              project={task.project}
+              dueDate={task.dueDate}
+              priority={task.priority}
+              completed={false}
+              onToggle={() => handleComplete(task.id)}
+            />
+          ))}
       </div>
     </DashboardLayout>
   );
