@@ -1,6 +1,6 @@
 "use client";
 
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/components/toast/ToastContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
@@ -44,6 +44,24 @@ const initialProjects: Project[] = [
     progress: 90,
     status: "archived",
     teamMembers: ["eve", "frank"],
+  },
+  {
+    id: 4,
+    title: "E-commerce Platform",
+    description: "New platform for online sales and inventory",
+    dueDate: "May 15",
+    progress: 20,
+    status: "active",
+    teamMembers: ["grace", "heidi"],
+  },
+  {
+    id: 5,
+    title: "Customer Feedback System",
+    description: "Tool for collecting and analyzing customer feedback",
+    dueDate: "May 20",
+    progress: 10,
+    status: "active",
+    teamMembers: ["ivan", "judy"],
   },
 ];
 
@@ -181,15 +199,16 @@ export default function DashboardPage() {
       {/* My Projects */}
       <h2 className="text-xl font-semibold text-secondary mb-4">My Projects</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 w-full">
-
-        {initialProjects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            tasks={initialTasks.filter((t) => t.project === project.title)}
-            href={`/projects/${project.id}`}
-          />
-        ))}
+        {projects
+          .filter((project) => project.status === "active")
+          .map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              tasks={initialTasks.filter((t) => t.project === project.title)}
+              href={`/projects/${project.id}`}
+            />
+          ))}
       </div>
 
       {/* Upcoming Tasks */}
