@@ -9,13 +9,9 @@ type LayoutProps = {
 export default function DashboardLayout({ title, children }: LayoutProps) {
   return (
     <div className="flex min-h-screen">
-      {/* Main Content Area */}
+      {/* Navbar */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Bar */}
-        <header className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
-          {/* <h1 className="text-lg font-semibold text-primary">
-            {title}
-          </h1> */}
+        <header className="bg-white px-20 py-4 shadow-md flex justify-between items-center">
           <Link href="/dashboard" className="text-lg font-semibold text-primary">
             <Image 
               src="/logo.png"
