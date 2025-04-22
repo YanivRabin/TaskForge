@@ -31,7 +31,7 @@ const initialTasks: Task[] = [
   {
     id: 2,
     title: "Connect database to API",
-    project: "CRM Tool",
+    project: "Internal CRM Tool",
     category: "Development",
     dueDate: "Apr 21",
     priority: "medium" as const,
@@ -41,7 +41,7 @@ const initialTasks: Task[] = [
   {
     id: 3,
     title: "Finalize app icons",
-    project: "Mobile UI Kit",
+    project: "Mobile App UI Kit",
     category: "Design",
     dueDate: "Apr 25",
     priority: "low" as const,
@@ -141,6 +141,7 @@ export default function DashboardPage() {
           <ProjectCard
             key={project.id}
             project={project}
+            tasks={initialTasks.filter((t) => t.project === project.title)}
             href={`/projects/${project.id}`}
           />
         ))}

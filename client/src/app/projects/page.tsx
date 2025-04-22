@@ -3,6 +3,7 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
 import { Project } from "@/types/project";
+import { Task } from "@/types/task";
 
 const mockProjects: Project[] = [
   {
@@ -12,7 +13,7 @@ const mockProjects: Project[] = [
     dueDate: "Apr 30",
     progress: 65,
     status: "active",
-    teamMembers: ["alice@example.com", "bob@example.com"],
+    teamMembers: ["alice", "bob"],
   },
   {
     id: 2,
@@ -21,7 +22,7 @@ const mockProjects: Project[] = [
     dueDate: "May 10",
     progress: 40,
     status: "active",
-    teamMembers: ["carol@example.com", "dave@example.com"],
+    teamMembers: ["carol", "dave"],
   },
   {
     id: 3,
@@ -30,7 +31,52 @@ const mockProjects: Project[] = [
     dueDate: "Apr 25",
     progress: 90,
     status: "archived",
-    teamMembers: ["eve@example.com", "frank@example.com"],
+    teamMembers: ["eve", "frank"],
+  },
+];
+
+const initialTasks: Task[] = [
+  {
+    id: 1,
+    title: "Draft homepage copy",
+    project: "Marketing Website",
+    dueDate: "Apr 28",
+    priority: "high",
+    status: "not-started",
+    owner: "",
+    category: {
+      name: "Content",
+      color: "text-blue-900",
+      bg: "bg-blue-100",
+    },
+  },
+  {
+    id: 2,
+    title: "Design hero section",
+    project: "Marketing Website",
+    dueDate: "Apr 29",
+    priority: "medium",
+    status: "in-progress",
+    owner: "Bob",
+    category: {
+      name: "Design",
+      color: "text-green-900",
+      bg: "bg-green-100",
+    },
+  },
+  {
+    id: 3,
+    title: "SEO plan",
+    project: "Marketing Website",
+    dueDate: "Apr 27",
+    priority: "low",
+    status: "not-started",
+    owner: "",
+    category: {
+      name: "SEO",
+      color: "text-yellow-900",
+      bg: "bg-yellow-100",
+    },
   },
 ];
 
@@ -46,6 +92,7 @@ export default function ProjectsPage() {
           <ProjectCard
             key={project.id}
             project={project}
+            tasks={initialTasks.filter((t) => t.project === project.title)}
             href={`/projects/${project.id}`}
           />
         ))}
