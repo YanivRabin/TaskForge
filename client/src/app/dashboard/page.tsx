@@ -180,7 +180,8 @@ export default function DashboardPage() {
 
       {/* My Projects */}
       <h2 className="text-xl font-semibold text-secondary mb-4">My Projects</h2>
-      <div className="flex flex-wrap gap-6 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 w-full">
+
         {initialProjects.map((project) => (
           <ProjectCard
             key={project.id}

@@ -15,36 +15,52 @@ export default function ProjectCard({
   tasks,
   href,
 }: ProjectCardProps) {
-  const { title, description, dueDate, progress } = project;
+  const { title, description, dueDate, teamMembers, status } = project;
 
   const card = (
     <div
       className={`
-        bg-white rounded-xl border border-gray-200 shadow-sm
-        p-6 w-full sm:w-80
-        transition-all duration-200
-        hover:shadow-lg hover:scale-[1.02] hover:brightness-105
-        focus:outline focus:outline-offset-2 focus:outline-accent
-        cursor-pointer flex flex-col justify-between min-h-[240px]
-      `}
+      bg-white rounded-xl border border-gray-200 shadow-sm
+      p-6 w-full
+      transition-all duration-200
+      hover:shadow-md hover:ring-2 hover:ring-accent/20
+      cursor-pointer flex flex-col justify-between gap-2
+    `}
       tabIndex={href ? 0 : -1}
     >
-      <h3 className="text-lg font-bold text-primary mb-2">{title}</h3>
-
-      {description && (
-        <p className="text-sm text-tertiary mb-4 line-clamp-2">{description}</p>
-      )}
-
-      <div className="h-2 w-full bg-gray-200 rounded-full mb-4 overflow-hidden">
-        <div
-          className="h-full bg-accent transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
+      <div className="flex flex-col gap-1">
+        <h3 className="text-lg font-bold text-primary">{title}</h3>
+        {description && (
+          <p className="text-sm text-tertiary line-clamp-2">{description}</p>
+        )}
+        <div className="text-sm text-secondary">
+          Team: {teamMembers.join(", ")}
+        </div>
       </div>
 
-      <div className="flex justify-between text-sm text-secondary">
-        <span>{progress}% complete</span>
-        {dueDate && <span>Due {dueDate}</span>}
+      <div className="flex flex-wrap justify-between text-sm mt-2">
+        <div className="gap-2 flex items-center">
+          <span
+            className={`font-medium px-3 py-1 rounded-full text-xs ${
+              status === "active"
+                ? "bg-green-100 text-green-800"
+                : status === "archived"
+                ? "bg-gray-100 text-gray-600"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {status}
+          </span>
+
+          <span className="text-gray-400 whitespace-nowrap">
+            {tasks.length} Task{tasks.length !== 1 && "s"}
+          </span>
+        </div>
+        {dueDate && (
+          <span className="text-secondary whitespace-nowrap ">
+            Due {dueDate}
+          </span>
+        )}
       </div>
     </div>
   );
