@@ -1,3 +1,5 @@
+import { Project } from "@/types/project";
+import { Task } from "@/types/task";
 import Link from "next/link";
 
 type StatCardProps = {
@@ -6,6 +8,9 @@ type StatCardProps = {
   icon?: React.ReactNode;
   color?: string;
   href?: string;
+  project?: Project[];
+  tasks?: Task[];
+  status?: string;
 };
 
 export default function StatCard({
@@ -14,6 +19,9 @@ export default function StatCard({
   icon,
   color = "bg-secondary",
   href,
+  project,
+  tasks,
+  status,
 }: StatCardProps) {
   const card = (
     <div
@@ -38,5 +46,20 @@ export default function StatCard({
     </div>
   );
 
-  return href ? <Link href={href}>{card}</Link> : card;
+  return href ? (
+    <Link
+      href={{
+        pathname: href,
+        query: {
+          status: status,
+          project: JSON.stringify(project),
+          tasks: JSON.stringify(tasks),
+        },
+      }}
+    >
+      {card}
+    </Link>
+  ) : (
+    card
+  );
 }

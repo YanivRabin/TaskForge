@@ -9,54 +9,11 @@ import { priorityWeight } from "@/lib/constants";
 import { Task } from "@/types/task";
 import { useToast } from "@/components/toast/ToastContext";
 
-const allTasks: Task[] = [
-  {
-    id: 1,
-    title: "Write release notes",
-    project: "Marketing Website",
-    category: "Documentation",
-    dueDate: "Apr 22",
-    priority: "high",
-    status: "in-progress",
-    owner: "Alice",
-  },
-  {
-    id: 2,
-    title: "Connect database to API",
-    project: "CRM Tool",
-    category: "Backend",
-    dueDate: "Apr 21",
-    priority: "medium",
-    status: "in-progress",
-    owner: "Bob",
-  },
-  {
-    id: 3,
-    title: "Finalize app icons",
-    project: "Mobile UI Kit",
-    category: "Design",
-    dueDate: "Apr 25",
-    priority: "low",
-    status: "not-started",
-    owner: "Charlie",
-  },
-  {
-    id: 4,
-    title: "Fix billing bug",
-    project: "CRM Tool",
-    category: "Bug",
-    dueDate: "Apr 19",
-    priority: "high",
-    status: "overdue",
-    owner: "David",
-  },
-];
-
 export default function TasksPage() {
-  const searchParams = useSearchParams();
+  const params = useSearchParams();
   const { showToast } = useToast();
   const [sortBy, setSortBy] = useState<"date" | "priority">("date");
-  const [tasks, setTasks] = useState(allTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
@@ -73,19 +30,24 @@ export default function TasksPage() {
   };
 
   useEffect(() => {
-    const statusFilter = searchParams.get("status");
-    const overdueFilter = searchParams.get("filter") === "overdue";
-
-    let filtered = allTasks;
-
+    const tasksData = params.get("tasks");
+    if (!tasksData) return;
+  
+    const parsedTasks = JSON.parse(tasksData) as Task[];
+  
+    const statusFilter = params.get("status");
+    const overdueFilter = params.get("filter") === "overdue";
+  
+    let filtered = parsedTasks;
+  
     if (statusFilter) {
-      filtered = filtered.filter((task) => task.status === statusFilter);
+      filtered = parsedTasks.filter((task) => task.status === statusFilter);
     } else if (overdueFilter) {
-      filtered = filtered.filter((task) => task.status === "overdue");
+      filtered = parsedTasks.filter((task) => task.status === "overdue");
     }
-
+  
     setTasks(filtered);
-  }, [searchParams]);
+  }, [params]);
 
   const sortedTasks = [...tasks].sort((a, b) => {
     if (sortBy === "priority") {
@@ -123,7 +85,9 @@ export default function TasksPage() {
                 handleComplete(id);
               } else {
                 setTasks((prev) =>
-                  prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+                  prev.map((t) =>
+                    t.id === id ? { ...t, status: newStatus } : t
+                  )
                 );
               }
             }}

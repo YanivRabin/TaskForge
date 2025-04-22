@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {  useEffect, useState } from "react";
 import { useToast } from "@/components/toast/ToastContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProjectCard from "@/components/ProjectCard";
@@ -17,39 +17,6 @@ import {
 } from "react-icons/fa";
 import { Project } from "@/types/project";
 
-const initialTasks: Task[] = [
-  {
-    id: 1,
-    title: "Write release notes",
-    project: "Marketing Website",
-    category: "Marketing",
-    dueDate: "Apr 22",
-    priority: "high" as const,
-    status: "in-progress",
-    owner: "Yaniv Rabin",
-  },
-  {
-    id: 2,
-    title: "Connect database to API",
-    project: "Internal CRM Tool",
-    category: "Development",
-    dueDate: "Apr 21",
-    priority: "medium" as const,
-    status: "in-progress",
-    owner: "Yaniv Rabin",
-  },
-  {
-    id: 3,
-    title: "Finalize app icons",
-    project: "Mobile App UI Kit",
-    category: "Design",
-    dueDate: "Apr 25",
-    priority: "low" as const,
-    status: "in-progress",
-    owner: "Yaniv Rabin",
-  },
-];
-
 const initialProjects: Project[] = [
   {
     id: 1,
@@ -58,7 +25,7 @@ const initialProjects: Project[] = [
     dueDate: "Apr 30",
     progress: 65,
     status: "active",
-    teamMembers: ["Yaniv Rabin"],
+    teamMembers: ["alice", "bob"],
   },
   {
     id: 2,
@@ -67,7 +34,7 @@ const initialProjects: Project[] = [
     dueDate: "May 10",
     progress: 40,
     status: "active",
-    teamMembers: ["Yaniv Rabin"],
+    teamMembers: ["carol", "dave"],
   },
   {
     id: 3,
@@ -76,14 +43,84 @@ const initialProjects: Project[] = [
     dueDate: "Apr 25",
     progress: 90,
     status: "archived",
-    teamMembers: ["Yaniv Rabin"],
+    teamMembers: ["eve", "frank"],
+  },
+];
+
+const initialTasks: Task[] = [
+  {
+    id: 1,
+    title: "Draft homepage copy",
+    project: "Marketing Website",
+    dueDate: "Apr 28",
+    priority: "high",
+    status: "not-started",
+    owner: "",
+    category: {
+      name: "Content",
+      color: "text-blue-900",
+      bg: "bg-blue-900",
+    },
+  },
+  {
+    id: 2,
+    title: "Design hero section",
+    project: "Marketing Website",
+    dueDate: "Apr 29",
+    priority: "medium",
+    status: "in-progress",
+    owner: "Bob",
+    category: {
+      name: "Content",
+      color: "text-green-900",
+      bg: "bg-green-900",
+    },
+  },
+  {
+    id: 4,
+    title: "Design hero section",
+    project: "Marketing Website",
+    dueDate: "Apr 30",
+    priority: "low",
+    status: "in-progress",
+    owner: "Bob",
+    category: {
+      name: "Design",
+      color: "text-red-900",
+      bg: "bg-red-900",
+    },
+  },
+  {
+    id: 3,
+    title: "SEO plan",
+    project: "Internal CRM Tool",
+    dueDate: "Apr 27",
+    priority: "low",
+    status: "not-started",
+    owner: "",
+    category: {
+      name: "SEO",
+      color: "text-yellow-900",
+      bg: "bg-yellow-100",
+    },
   },
 ];
 
 export default function DashboardPage() {
   const { showToast } = useToast();
-  const [tasks, setTasks] = useState(initialTasks);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [sortBy, setSortBy] = useState<"date" | "priority">("date");
+
+  useEffect(() => {
+    setProjects(initialProjects);
+    setTasks(initialTasks);
+  }, []);
+
+  const inProgressTasks = initialTasks.filter(
+    (t) => t.status === "in-progress"
+  );
+  const overdueTasks = initialTasks.filter((t) => t.status === "overdue");
 
   const handleComplete = (id: number) => {
     const task = tasks.find((t) => t.id === id);
@@ -106,31 +143,38 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
         <StatCard
           label="Projects"
-          value={8}
+          value={initialProjects.length}
           icon={<FaFolderOpen />}
-          color="bg-secondary"
+          color="bg-primary"
           href="/projects"
+          project={projects}
+          tasks={tasks}
         />
         <StatCard
           label="Total Tasks"
-          value={42}
+          value={tasks.length}
           icon={<FaTasks />}
-          color="bg-primary"
+          color="bg-secondary"
           href="/tasks"
+          tasks={tasks}
         />
         <StatCard
           label="In Progress"
-          value={16}
+          value={inProgressTasks.length}
           icon={<FaClock />}
           color="bg-tertiary"
-          href="/tasks?status=in-progress"
+          href="/tasks"
+          tasks={inProgressTasks}
+          status="in-progress"
         />
         <StatCard
           label="Overdue"
-          value={5}
+          value={overdueTasks.length}
           icon={<FaExclamationTriangle />}
           color="bg-red-600"
-          href="/tasks?filter=overdue"
+          href="/tasks"
+          tasks={overdueTasks}
+          status="overdue"
         />
       </div>
 

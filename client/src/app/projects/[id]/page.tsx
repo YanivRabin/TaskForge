@@ -26,7 +26,9 @@ export default function ProjectDetailsTableView() {
     }
   }, [params]);
 
-  const categories = Array.from(new Set(tasks.map((task) => task.category)));
+  const categories = Array.from(
+    new Map(tasks.map((task) => [task.category.name, task.category])).values()
+  );
 
   const handleStatusChange = (id: number, newStatus: TaskStatus) => {
     setTasks((prev) =>
@@ -60,9 +62,13 @@ export default function ProjectDetailsTableView() {
         <div key={index} className="mb-12">
           <div className="overflow-auto">
             <table className="w-full table-fixed text-md text-center">
-              <thead className=" text-secondary">
+              <thead>
                 <tr>
-                  <th className={`w-4/10 p-3 text-2xl text-left font-bold ${category.color}`}>{category.name}</th>
+                  <th
+                    className={`w-4/10 p-3 text-2xl text-left font-bold ${category.color}`}
+                  >
+                    {category.name}
+                  </th>
                   <th className="w-1/10 p-3">Owner</th>
                   <th className="w-2/10 p-3">Status</th>
                   <th className="w-2/10 p-3">Priority</th>
@@ -71,10 +77,10 @@ export default function ProjectDetailsTableView() {
               </thead>
               <tbody>
                 {tasks
-                  .filter((task) => task.category === category)
+                  .filter((task) => task.category.name === category.name)
                   .map((task) => (
                     <tr key={task.id} className="border-t-10 border-white">
-                      <td className="p-3 font-medium text-primary border-r-10 border-white bg-gray-100">
+                      <td className="p-3 font-medium text-primary border-r-10 border-white bg-gray-100 text-left">
                         {task.title}
                       </td>
                       <td className="p-3 text-secondary border-r-10 border-white bg-gray-100">
@@ -92,7 +98,9 @@ export default function ProjectDetailsTableView() {
                         )}
                       </td>
                       <td
-                        className={`p-3 border-r-10 border-white ${statusColors[task.status]}`}
+                        className={`p-3 border-r-10 border-white ${
+                          statusColors[task.status]
+                        }`}
                       >
                         <select
                           value={task.status}
