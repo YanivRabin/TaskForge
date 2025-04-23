@@ -40,18 +40,6 @@ export default function ProjectCard({
 
       <div className="flex flex-wrap justify-between text-sm mt-2">
         <div className="gap-2 flex items-center">
-          <span
-            className={`font-medium px-3 py-1 rounded-full text-xs ${
-              status === "active"
-                ? "bg-green-100 text-green-800"
-                : status === "archived"
-                ? "bg-gray-100 text-gray-600"
-                : "bg-blue-100 text-blue-800"
-            }`}
-          >
-            {status}
-          </span>
-
           <span className="text-gray-400 whitespace-nowrap">
             {tasks.length} Task{tasks.length !== 1 && "s"}
           </span>
